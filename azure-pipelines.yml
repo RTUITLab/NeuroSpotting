@@ -42,8 +42,8 @@ stages:
         containerRegistry: 'rtuitlab connection by admin'
         repository: 'rtuitlab/neurospotting'
         command: 'buildAndPush'
-        Dockerfile: '$(Pipeline.Workspace)/Dockerfile'
-        buildContext: '$(Pipeline.Workspace)'
+        Dockerfile: '$(Pipeline.Workspace)/neurospotting/Dockerfile'
+        buildContext: '$(Pipeline.Workspace)/neurospotting'
         tags: |
           $(tag)
           latest
