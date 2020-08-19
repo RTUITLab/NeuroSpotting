@@ -22,8 +22,12 @@ stages:
         npm ci
         npm run build-prod
       displayName: 'npm run build'
-
-    - publish: dist
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'dist/AngularTest'
+        Contents: '**'
+        TargetFolder: 'deploy/dist'
+    - publish: deploy
       artifact: neurospotting
 - stage: DeployImage
   displayName: Deploy image
@@ -33,18 +37,13 @@ stages:
     steps:
     - download: current
       artifact: neurospotting
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: 'neurospotting'
-        Contents: '**'
-        TargetFolder: 'deploy'
     - task: Docker@2
       inputs:
         containerRegistry: 'rtuitlab connection by admin'
         repository: 'rtuitlab/neurospotting'
         command: 'buildAndPush'
-        Dockerfile: './deploy/Dockerfile'
-        buildContext: 'deploy'
+        Dockerfile: '$(Pipeline.Workspace)/Dockerfile'
+        buildContext: '$(Pipeline.Workspace)'
         tags: |
           $(tag)
           latest
