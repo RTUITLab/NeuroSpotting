@@ -32,7 +32,7 @@ stages:
     displayName: BuildAndPushImage
     steps:
     - download: current
-      artifact: 
+      artifact: neurospotting
     - task: CopyFiles@2
       inputs:
         SourceFolder: 'neurospotting'
