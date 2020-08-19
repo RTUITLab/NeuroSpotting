@@ -1,16 +1,51 @@
+name: $(BuildID)-$(Build.SourceBranchName)
+
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+variables:
+  tag: '$(Build.BuildId)'
 
-- script: |
-    npm ci
-    npm run build-prod
-  displayName: 'npm run build'
+stages:
+- stage: Build
+  displayName: Build app
+  jobs:  
+  - job: Build
+    displayName: Build angular app
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
 
-- publish: dist
-  artifact: neurospotting
+    - script: |
+        npm ci
+        npm run build-prod
+      displayName: 'npm run build'
+
+    - publish: dist
+      artifact: neurospotting
+- stage: DeployImage
+  displayName: Deploy image
+  jobs:
+  - job: Deploy
+    displayName: BuildAndPushImage
+    steps:
+    - download: current
+      artifact: 
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'neurospotting'
+        Contents: '**'
+        TargetFolder: 'deploy'
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'rtuitlab connection by admin'
+        repository: 'rtuitlab/neurospotting'
+        command: 'buildAndPush'
+        Dockerfile: './deploy/Dockerfile'
+        buildContext: 'deploy'
+        tags: |
+          $(tag)
+          latest
+    
