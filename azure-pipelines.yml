@@ -23,6 +23,7 @@ stages:
         npm run build-prod
       displayName: 'npm run build'
     - task: CopyFiles@2
+      displayName: copy dist to deploy
       inputs:
         SourceFolder: 'dist/AngularTest'
         Contents: '**'
@@ -38,6 +39,7 @@ stages:
     - download: current
       artifact: neurospotting
     - task: Docker@2
+      displayName: Build and push image
       inputs:
         containerRegistry: 'rtuitlab connection by admin'
         repository: 'rtuitlab/neurospotting'
@@ -47,4 +49,20 @@ stages:
         tags: |
           $(tag)
           latest
-    
+- stage: Deploy
+  displayName: Deploy service
+  jobs:
+  - job: Deploy_key_rec
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    steps:
+    - task: SSH@0
+      displayName: Restart service
+      inputs:
+        sshEndpoint: 'sc vm'
+        runOptions: 'inline'
+        inline: |
+          cd /home/admin/key-rec
+          docker-compose --no-ansi pull 2>&1
+          docker-compose --no-ansi up -d 2>&1
+        failOnStdErr: false
+        readyTimeout: '20000'
