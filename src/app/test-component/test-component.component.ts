@@ -25,7 +25,7 @@ export class TestComponentComponent implements OnInit {
     this.prediction = false;
     this.keyPhraseCounter = 0;
     this.modelNames = [
-      { name: 'Mira', displayName: 'Мира' },
+      { name: 'mira', displayName: 'Мира' },
       { name: 'Dio', displayName: 'Дио' },
       { name: 'Itan', displayName: 'Итан' },
       { name: 'Jarvis', displayName: 'Джарвис' },
