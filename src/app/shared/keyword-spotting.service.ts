@@ -7,17 +7,19 @@ import { NeuralNetwork } from '../classes/neural-network';
   providedIn: 'root',
 })
 export class KeywordSpottingService {
-  private audioCtx: AudioContext;
+  public audioCtx: AudioContext;
   private microphone: MediaStreamAudioSourceNode;
   private preprocessor: Preprocessor;
   private recorder: AudioWorkletNode;
   private network: NeuralNetwork;
   private recording: BehaviorSubject<Boolean>;
   private stream: MediaStream;
+  private falsePositive: Array<number>;
   constructor() {}
 
   public Init(modelName: string): BehaviorSubject<Boolean> {
     this.recording = new BehaviorSubject<Boolean>(false);
+    this.falsePositive = null;
     this.audioCtx = new AudioContext();
     Preprocessor.initFirFilter();
     this.preprocessor = new Preprocessor(0.4, 0.02, this.audioCtx);
@@ -81,6 +83,10 @@ export class KeywordSpottingService {
       this.preprocessor.clearBuffer();
       this.audioCtx.suspend();
     }
+  }
+
+  public GetKeywordAudio(): Array<number>{
+    return this.preprocessor.buffer.GetBuffer();
   }
 
   public LoadModel(modelName: string): void {

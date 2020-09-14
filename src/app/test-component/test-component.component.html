@@ -13,7 +13,15 @@
             <select (change)="UpdateModelName()" [(ngModel)]="currentModelName" [disabled]="recording" class="select">
                 <option *ngFor="let model of modelNames" [ngValue]="model.name"> {{model.displayName}} </option>
             </select>
-            <button [ngClass]="ButtonAppearence()" (click)="Toggle()">{{recording === false ? 'Start' : 'Stop'}}</button>
+            <div class="recording-wrapper"> 
+                <button (click)="Toggle()" class="recording-button">{{recording === false ? 'Record' : 'Stop'}}</button>
+                <span [ngClass]="ButtonAppearence()">s</span>
+            </div>
+            <button (click)="Download()" class="downloadButton" [disabled]="falsePositive === null">
+                Download latest<br/>
+                false positive
+            </button>
+            <a style="display: none;" href="" download="" id="downloader"></a>
         </div>
     </div>
 </body>

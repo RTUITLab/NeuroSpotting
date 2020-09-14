@@ -5,7 +5,7 @@ export class NeuralNetwork {
   private model: tf.LayersModel;
   private treshold: number;
   public prediction: BehaviorSubject<Boolean>;
-  private modelName: string = '';
+  public modelName: string = '';
 
   constructor(activationTreshold: number, modelName: string) {
     this.prediction = new BehaviorSubject<Boolean>(false);
